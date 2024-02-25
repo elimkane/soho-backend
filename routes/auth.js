@@ -52,7 +52,7 @@ router.post('/register', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Création de l'utilisateur
-    user = await User.create({ email, first_name, last_name, phone_number, password: hashedPassword });
+    user = await User.create({ email, first_name, last_name, phone_number, password: hashedPassword, status:'INIT' });
     
     res.status(201).json({ message: 'Utilisateur créé avec succès' });
   } catch (error) {
@@ -71,13 +71,15 @@ router.post('/login', async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'Utilisateur non trouvé' });
     }
-
     // Vérifiez le mot de passe
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Mot de passe incorrect' });
     }
 
+    if (user.status !== 'VERIFIED'){
+        return res.status(401).json({ message: "ce compte n'est pas encore verifier" });
+    }
     // Générer un token JWT
     const token = jwt.sign({ userId: user.id }, 'votre_clé_secrète', { expiresIn: '1h' });
 
