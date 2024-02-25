@@ -8,6 +8,8 @@ async function registerWithFiles(req, res) {
 
     try {
         const { email, first_name, last_name, phone_number, password } = req.body;
+        // Construisez l'URL complète du fichier
+
         const rectoFile = req.files['recto'][0];
         const versoFile = req.files['verso'][0];
 
@@ -22,6 +24,11 @@ async function registerWithFiles(req, res) {
         const otpCode = OtpUtils.generateOTP();
         // Envoyer le code OTP par e-mail
         await OtpUtils.sendOTPEmail(email, otpCode);
+
+        const baseUrl = 'http://localhost:3000';  // Remplacez cela par l'URL de votre serveur
+        const rectoUrl = baseUrl + '/' + rectoFile.path;
+        const versoUrl = baseUrl + '/' + versoFile.path;
+
         // Enregistrez les chemins des fichiers dans la base de données
         user = await User.create({
             email,
@@ -31,11 +38,16 @@ async function registerWithFiles(req, res) {
             password: hashedPassword,
             status: 'INIT',
             otp_code: otpCode,
-            recto: rectoFile.path,
-            verso: versoFile.path,
+            recto: rectoUrl,
+            verso: versoUrl,
         });
 
-        res.status(201).json({ message: 'Utilisateur créé avec succès' });
+        // Retournez l'URL complète dans la réponse JSON
+        res.status(201).json({
+            message: 'Utilisateur créé avec succès',
+            rectoUrl: rectoUrl,
+            versoUrl: versoUrl,
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Erreur serveur' });
