@@ -6,9 +6,9 @@ const options = {
     definition: {
         openapi: '3.0.0',
         info: {
-            title: 'Nom de votre API',
+            title: 'Soho-API',
             version: '1.0.0',
-            description: 'Description de votre API',
+            description: 'Backend du projet Soho',
         },
     },
     // Spécifiez ici les fichiers qui contiennent vos routes

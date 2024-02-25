@@ -36,7 +36,15 @@ const User = sequelize.define('User', {
   otp_code: {
     type: DataTypes.STRING,
     allowNull: false
-  }
+  },
+  recto: {
+    type: DataTypes.STRING,
+    allowNull: true, // Peut être null si vous le souhaitez
+  },
+  verso: {
+    type: DataTypes.STRING,
+    allowNull: true, // Peut être null si vous le souhaitez
+  },
 });
 
 User.hasMany(Transaction, { foreignKey: 'senderId' });

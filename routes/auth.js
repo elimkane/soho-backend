@@ -8,28 +8,52 @@ const User = require('../models/User');
 const {createTransport} = require("nodemailer");
 const OtpUtils = require('../utils/otpUtils');
 const router = express.Router();
+const multer = require('multer');
+const userController = require('../controllers/userController');
 
+// Configuration de Multer pour stocker les fichiers dans le dossier 'uploads'
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + '.' + file.originalname.split('.').pop());
+    },
+});
+
+const upload = multer({ storage: storage });
 
 // Middleware de validation pour les données d'entrée
 const validateRegisterInput = [
     body('email')
-    .notEmpty().withMessage('L\'adresse e-mail ne peut pas être vide')
-    .isEmail().withMessage('L\'adresse e-mail n\'est pas valide'),
+        .notEmpty().withMessage('L\'adresse e-mail ne peut pas être vide')
+        .isEmail().withMessage('L\'adresse e-mail n\'est pas valide'),
     body('first_name').notEmpty().withMessage('Le prénom ne peut pas être vide'),
     body('last_name').notEmpty().withMessage('Le nom de famille ne peut pas être vide'),
     body('phone_number')
-    .notEmpty().withMessage('Le numéro de téléphone ne peut pas être vide')
-    .isInt({ min: 100000000, max: 999999999 }).withMessage('Le numéro de téléphone doit être un nombre de 9 chiffres')
-    .custom(value => {
-      const validPrefixes = ['77', '78', '70'];
-      const prefix = value.toString().substring(0, 2);
-      if (!validPrefixes.includes(prefix)) {
-        throw new Error('Le numéro de téléphone doit commencer par 77, 78 ou 70');
-      }
-      return true;
-    }),
+        .notEmpty().withMessage('Le numéro de téléphone ne peut pas être vide')
+        .isInt({ min: 100000000, max: 999999999 }).withMessage('Le numéro de téléphone doit être un nombre de 9 chiffres')
+        .custom(value => {
+            const validPrefixes = ['77', '78', '70'];
+            const prefix = value.toString().substring(0, 2);
+            if (!validPrefixes.includes(prefix)) {
+                throw new Error('Le numéro de téléphone doit commencer par 77, 78 ou 70');
+            }
+            return true;
+        }),
     body('password').isLength({ min: 6 }).withMessage('Le mot de passe doit contenir au moins 6 caractères'),
-  ];
+];
+router.post('/register-with-file',upload.fields([{ name: 'recto', maxCount: 1 }, { name: 'verso', maxCount: 1 }]), userController.registerWithFiles);
+
+
+
+/**
+ * @swagger
+ * tags:
+ *   name: Authentification
+ *   description: Gestion de l'authentification et des utilisateurs
+ */
 
 // Route pour la création de compte utilisateur
 /**
@@ -52,9 +76,6 @@ const validateRegisterInput = [
  *           application/json:
  *             example:
  *               message: Utilisateur créé avec succès
- *               user:
- *                 id: 1
- *                 username: john_doe
  *       400:
  *         description: Erreur de validation
  *         content:
