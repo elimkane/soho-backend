@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
+const {createTransport} = require("nodemailer");
 
 const router = express.Router();
 
@@ -51,10 +52,16 @@ router.post('/register', async (req, res) => {
     // Hash du mot de passe
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Création de l'utilisateur
-    user = await User.create({ email, first_name, last_name, phone_number, password: hashedPassword, status:'INIT' });
-    
-    res.status(201).json({ message: 'Utilisateur créé avec succès' });
+
+    //send OTP to User
+    // Générer un code OTP
+      const otpCode = generateOTP();
+    // Envoyer le code OTP par e-mail
+      await sendOTPEmail(email, otpCode);
+      // Création de l'utilisateur
+      user = await User.create({ email, first_name, last_name, phone_number, password: hashedPassword, status:'INIT', otp_code : otpCode });
+
+      res.status(201).json({ message: 'Utilisateur créé avec succès' });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Erreur serveur' });
@@ -90,4 +97,31 @@ router.post('/login', async (req, res) => {
   }
 });
 
+
+
+//Fonctions Utilitaires
+// Fonction pour générer un code OTP (à adapter selon vos besoins)
+function generateOTP() {
+    return Math.floor(1000 + Math.random() * 9000).toString();
+}
+
+
+// Fonction pour envoyer le code OTP par e-mail
+async function sendOTPEmail(toEmail, otpCode) {
+    const transporter = createTransport({
+        service: 'gmail', // Exemple: 'Gmail'
+        auth: {
+            user: 'malick.diallo@ism.edu.sn',
+            pass: 'malickbac',
+        },
+    });
+
+    const mailOptions = {
+        from: 'malick.diallo@ism.edu.sn',
+        to: toEmail,
+        subject: 'Code OTP pour la vérification du compte',
+        text: `Votre code OTP est : ${otpCode}`,
+    };
+    await transporter.sendMail(mailOptions);
+}
 module.exports = router;

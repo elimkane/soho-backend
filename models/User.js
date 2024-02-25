@@ -2,6 +2,7 @@
 
 const { DataTypes } = require('sequelize');
 const sequelize = require('../storage/sequelize-config');
+const Transaction = require('./Transaction');  // Assurez-vous que le chemin est correct
 
 const User = sequelize.define('User', {
   email: {
@@ -28,10 +29,16 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  status: {
+  state: {
+    type: DataTypes.ENUM('INIT', 'VERIFIED'),
+    defaultValue: 'INIT'
+  },
+  otp_code: {
     type: DataTypes.STRING,
     allowNull: false
   }
 });
+
+User.hasMany(Transaction, { foreignKey: 'senderId' });
 
 module.exports = User;

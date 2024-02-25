@@ -15,6 +15,7 @@
     "install": "^0.13.0",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.9.1",
+    "nodemailer": "^6.9.10",
     "npm": "^10.4.0",
     "sequelize": "^6.37.1"
   }
