@@ -32,6 +32,38 @@ const validateRegisterInput = [
   ];
 
 // Route pour la création de compte utilisateur
+/**
+ * @swagger
+ * /register:
+ *   post:
+ *     summary: Créer un nouvel utilisateur
+ *     tags:
+ *       - Utilisateurs
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       201:
+ *         description: Utilisateur créé avec succès
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Utilisateur créé avec succès
+ *               user:
+ *                 id: 1
+ *                 username: john_doe
+ *       400:
+ *         description: Erreur de validation
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: Échec de la validation des données
+ *               errors:
+ *                 - Champ 'username' requis
+ */
 router.post('/register', async (req, res) => {
 
     // Vérifier les erreurs de validation
