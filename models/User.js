@@ -37,6 +37,10 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false
   },
+  pays_iso_2: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
   recto: {
     type: DataTypes.STRING,
     allowNull: true, // Peut être null si vous le souhaitez

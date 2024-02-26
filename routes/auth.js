@@ -24,6 +24,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+router.post('/register-with-file',upload.fields([{ name: 'recto', maxCount: 1 }, { name: 'verso', maxCount: 1 }]), userController.registerWithFiles);
+
 // Middleware de validation pour les données d'entrée
 const validateRegisterInput = [
     body('email')
@@ -44,7 +46,6 @@ const validateRegisterInput = [
         }),
     body('password').isLength({ min: 6 }).withMessage('Le mot de passe doit contenir au moins 6 caractères'),
 ];
-router.post('/register-with-file',upload.fields([{ name: 'recto', maxCount: 1 }, { name: 'verso', maxCount: 1 }]), userController.registerWithFiles);
 
 
 
@@ -94,7 +95,7 @@ router.post('/register', async (req, res) => {
     }
 
   try {
-    const { email, first_name, last_name, phone_number, password } = req.body;
+    const { email, first_name, last_name, phone_number, password,pays_iso_2 } = req.body;
 
     // Vérifiez si l'utilisateur existe déjà
     let user = await User.findOne({ where: { email } });
@@ -112,7 +113,7 @@ router.post('/register', async (req, res) => {
     // Envoyer le code OTP par e-mail
       await OtpUtils.sendOTPEmail(email, otpCode);
       // Création de l'utilisateur
-      user = await User.create({ email, first_name, last_name, phone_number, password: hashedPassword, status:'INIT', otp_code : otpCode });
+      user = await User.create({ email, first_name, last_name, phone_number,pays_iso_2:pays_iso_2, password: hashedPassword, status:'INIT', otp_code : otpCode });
 
       res.status(201).json({ message: 'Utilisateur créé avec succès' });
   } catch (error) {
