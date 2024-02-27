@@ -24,7 +24,8 @@ app.use('/transaction', transactionRoutes);
 // Ajoutez Swagger à votre application
 app.use('/api-docs', swagger.serve, swagger.setup);
 
-sequelize.sync({force : true}).then(() => {
+//sequelize.sync({force : true}).then(() => {
+sequelize.sync().then(() => {
   app.listen(port, () => {
     console.log(`Serveur en cours d'exécution sur le port ${port}`);
   });
