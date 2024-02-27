@@ -1,8 +1,42 @@
+
+
+
 // controllers/userController.js
 
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const OtpUtils = require("../utils/otpUtils");
+
+
+async function uploadFileForUser(req, res) {
+    try {
+        const rectoFile = req.files['recto'][0];
+        const versoFile = req.files['verso'][0];
+        const { id } = req.body;
+
+        const user = await User.findByPk(id);
+        //user.dataValues.recto = rectoFile;
+        if (!user) {
+            return res.status(400).json({ message: "Utilisateur n'existe pas" });
+        }
+
+        const baseUrl = 'http://localhost:3000';  // Remplacez cela par l'URL de votre serveur
+        const rectoUrl = baseUrl + '/' + rectoFile.path;
+        const versoUrl = baseUrl + '/' + versoFile.path;
+
+        // Mettez à jour les champs recto et verso dans la base de données
+        user.recto = rectoUrl;
+        user.verso = versoUrl;
+        await user.save();
+
+        res.status(200).json({ message: 'Fichiers téléchargés avec succès',
+                               rectoUrl: rectoUrl,
+                               versoUrl: versoUrl});
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Erreur serveur' });
+    }
+}
 
 async function registerWithFiles(req, res) {
 
@@ -56,4 +90,5 @@ async function registerWithFiles(req, res) {
 
 module.exports = {
     registerWithFiles,
+    uploadFileForUser
 };

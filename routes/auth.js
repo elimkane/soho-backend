@@ -26,6 +26,7 @@ const upload = multer({ storage: storage });
 
 router.post('/register-with-file',upload.fields([{ name: 'recto', maxCount: 1 }, { name: 'verso', maxCount: 1 }]), userController.registerWithFiles);
 
+router.post('/upload-file',upload.fields([{ name: 'recto', maxCount: 1 }, { name: 'verso', maxCount: 1 }]),userController.uploadFileForUser)
 // Middleware de validation pour les données d'entrée
 const validateRegisterInput = [
     body('email')
@@ -138,13 +139,14 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Mot de passe incorrect' });
     }
 
-    if (user.status !== 'VERIFIED'){
+    /*if (user.status !== 'VERIFIED'){
         return res.status(401).json({ message: "ce compte n'est pas encore verifier" });
-    }
+    }*/
     // Générer un token JWT
     const token = jwt.sign({ userId: user.id }, 'votre_clé_secrète', { expiresIn: '1h' });
 
-    res.status(200).json({ token });
+    res.status(200).json({token: token,
+                          id: user.id});
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Erreur serveur' });
