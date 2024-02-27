@@ -10,7 +10,7 @@ const OtpUtils = require('../utils/otpUtils');
 const router = express.Router();
 const multer = require('multer');
 const userController = require('../controllers/userController');
-
+const { format } = require('date-fns');
 // Configuration de Multer pour stocker les fichiers dans le dossier 'uploads'
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -142,11 +142,17 @@ router.post('/login', async (req, res) => {
     /*if (user.status !== 'VERIFIED'){
         return res.status(401).json({ message: "ce compte n'est pas encore verifier" });
     }*/
-    // Générer un token JWT
+      // Calculer la date et l'heure d'expiration du token
+      const expirationDate = new Date();
+      expirationDate.setHours(expirationDate.getHours() + 1); // Ajouter 1 heure à la date actuelle
+      const formattedExpirationDate = format(expirationDate, 'dd/MM/yyyy HH:mm:ss');
+
+      // Générer un token JWT
     const token = jwt.sign({ userId: user.id }, 'votre_clé_secrète', { expiresIn: '1h' });
 
     res.status(200).json({token: token,
-                          id: user.id});
+                          id: user.id,
+                            expiration_at: formattedExpirationDate});
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Erreur serveur' });
