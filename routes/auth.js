@@ -151,8 +151,8 @@ router.post('/login', async (req, res) => {
     const token = jwt.sign({ userId: user.id }, 'votre_clé_secrète', { expiresIn: '1h' });
 
     res.status(200).json({token: token,
-                          id: user.id,
-                            expiration_at: formattedExpirationDate});
+                          user: user,
+                          expiration_at: formattedExpirationDate});
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Erreur serveur' });
