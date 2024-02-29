@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 const OtpUtils = require("../utils/otpUtils");
 const Otp = require("../models/Otp");
 
+//function to upload only files for existing user
 async function uploadFileForUser(req, res) {
   try {
     const rectoFile = req.files["recto"][0];
@@ -37,6 +38,7 @@ async function uploadFileForUser(req, res) {
   }
 }
 
+//function to registrer user with a files uploaded
 async function registerWithFiles(req, res) {
   try {
     const { email, first_name, last_name, phone_number, password } = req.body;
@@ -86,6 +88,7 @@ async function registerWithFiles(req, res) {
   }
 }
 
+//function that send otp to client
 async function sendOtp(req, res) {
   try {
     //get email from input json
@@ -120,6 +123,35 @@ async function sendOtp(req, res) {
   }
 }
 
+//Function that check otp validity
+async function checkOtp(req,res){
+  try{
+     const { email,otp_code } = req.body;
+
+      //check user by mail
+      const user = await checkUserByEmail(email);
+      if(user){
+      //check validaty of otp
+        const otpForUser = await Otp.findOne({ where: { userId : user.id, otp_code : otp_code, status : 'V'} });
+        if(otpForUser){
+          //update status otp
+          otpForUser.status = 'I';
+          otpForUser.save();
+          res.status(200).json({message : 'code OTP valide'});
+
+        }else{
+          res.status(404).json({message : 'code OTP incorrect ou expiré'});
+        }
+      }else{
+        res.status(404).json({message : 'utilisateur non trouvé'});
+      }
+  }catch(e){
+    console.error(e);
+    res.status(500).json({ message: "Erreur serveur ", e });
+  }
+}
+
+//function to check if email existe in table users
 async function checkUserByEmail(email) {
   // Vérifiez si l'utilisateur existe déjà
   let user = await User.findOne({ where: { email } });
@@ -134,4 +166,5 @@ module.exports = {
   registerWithFiles,
   uploadFileForUser,
   sendOtp,
+  checkOtp
 };
