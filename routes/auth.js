@@ -48,7 +48,8 @@ const validateRegisterInput = [
     body('password').isLength({ min: 6 }).withMessage('Le mot de passe doit contenir au moins 6 caractères'),
 ];
 
-
+//send OTP endpoint
+router.post('/send-otp',userController.sendOtp)
 
 /**
  * @swagger
@@ -110,11 +111,11 @@ router.post('/register', async (req, res) => {
 
     //send OTP to User
     // Générer un code OTP
-      const otpCode = OtpUtils.generateOTP();
+      //const otpCode = OtpUtils.generateOTP();
     // Envoyer le code OTP par e-mail
-      await OtpUtils.sendOTPEmail(email, otpCode);
+      //await OtpUtils.sendOTPEmail(email, otpCode);
       // Création de l'utilisateur
-      user = await User.create({ email, first_name, last_name, phone_number,pays_iso_2:pays_iso_2, password: hashedPassword, status:'INIT', otp_code : otpCode });
+      user = await User.create({ email, first_name, last_name, phone_number,pays_iso_2:pays_iso_2, password: hashedPassword, status:'INIT'});
 
       res.status(201).json({ message: 'Utilisateur créé avec succès' });
   } catch (error) {
