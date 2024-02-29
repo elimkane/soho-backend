@@ -100,7 +100,7 @@ router.post('/register', async (req, res) => {
     const { email, first_name, last_name, phone_number, password,pays_iso_2,otp_code } = req.body;
     
     // Vérifiez si l'utilisateur existe déjà
-    const checkOtp = userController.checkOtpV2(email, otp_code);
+    const checkOtp = await userController.checkOtpV2(email, otp_code);
     if(checkOtp){
       let user = await User.findOne({ where: { email } });
     if (user) {
