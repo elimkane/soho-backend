@@ -97,17 +97,18 @@ router.post('/register', async (req, res) => {
     }
 
   try {
-    const { email, first_name, last_name, phone_number, password,pays_iso_2 } = req.body;
-
+    const { email, first_name, last_name, phone_number, password,pays_iso_2,otp_code } = req.body;
+    
     // Vérifiez si l'utilisateur existe déjà
-    let user = await User.findOne({ where: { email } });
+    const checkOtp = userController.checkOtpV2(email, otp_code);
+    if(checkOtp){
+      let user = await User.findOne({ where: { email } });
     if (user) {
       return res.status(400).json({ message: 'L\'utilisateur existe déjà' });
     }
 
     // Hash du mot de passe
     const hashedPassword = await bcrypt.hash(password, 10);
-
 
     //send OTP to User
     // Générer un code OTP
@@ -118,6 +119,10 @@ router.post('/register', async (req, res) => {
       user = await User.create({ email, first_name, last_name, phone_number,pays_iso_2:pays_iso_2, password: hashedPassword, status:'INIT'});
 
       res.status(201).json({ message: 'Utilisateur créé avec succès' });
+    }else{
+      res.status(201).json({ message: 'code otp invalide ou expiré' });
+    }
+    
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Erreur serveur' });

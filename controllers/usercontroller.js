@@ -94,29 +94,20 @@ async function sendOtp(req, res) {
     //get email from input json
     const { email } = req.body;
     //check if user exist
-    const user = await checkUserByEmail(email);
-    if (user) {
-      //generate otp
-      const otpCode = OtpUtils.generateOTP();
-      //saveOtp to database
-      console.log("user_id", user.id);
-      await Otp.create({
-        otp_code: otpCode,
-        userId: user.id,
-        canal: "email",
-        status: "V",
-      });
-      user.otpCode = otpCode;
-      await user.save();
-      //send Otp to user
-      await OtpUtils.sendOTPEmail(email, otpCode);
-
-      res.status(200).json({
-        message: "code Otp envoyé avec succés",
-      });
-    }else{ //user not found
-      res.status(404).json({message : 'utilisateur non trouvé'});
-    }
+    //generate otp
+    const otpCode = OtpUtils.generateOTP();
+    //saveOtp to database
+    await Otp.create({
+      receiver: email,
+      otp_code: otpCode,
+      canal: "email",
+      status: "V",
+    });
+    //send Otp to user
+    await OtpUtils.sendOTPEmail(email, otpCode);
+    res.status(200).json({
+      message: "code Otp envoyé avec succés",
+    });
   } catch (e) {
     console.error(e);
     res.status(500).json({ message: "Erreur serveur ", e });
@@ -124,33 +115,52 @@ async function sendOtp(req, res) {
 }
 
 //Function that check otp validity
-async function checkOtp(req,res){
-  try{
-     const { email,otp_code } = req.body;
+async function checkOtp(req, res) {
+  try {
+    const { email, otp_code } = req.body;
 
-      //check user by mail
-      const user = await checkUserByEmail(email);
-      if(user){
+    //check user by mail
+    const user = await checkUserByEmail(email);
+    if (user) {
       //check validaty of otp
-        const otpForUser = await Otp.findOne({ where: { userId : user.id, otp_code : otp_code, status : 'V'} });
-        if(otpForUser){
-          //update status otp
-          otpForUser.status = 'I';
-          otpForUser.save();
-          res.status(200).json({message : 'code OTP valide'});
-
-        }else{
-          res.status(404).json({message : 'code OTP incorrect ou expiré'});
-        }
-      }else{
-        res.status(404).json({message : 'utilisateur non trouvé'});
+      const otpForUser = await Otp.findOne({
+        where: { userId: user.id, otp_code: otp_code, status: "V" },
+      });
+      if (otpForUser) {
+        //update status otp
+        otpForUser.status = "I";
+        otpForUser.save();
+        res.status(200).json({ message: "code OTP valide" });
+      } else {
+        res.status(404).json({ message: "code OTP incorrect ou expiré" });
       }
-  }catch(e){
+    } else {
+      res.status(404).json({ message: "utilisateur non trouvé" });
+    }
+  } catch (e) {
     console.error(e);
     res.status(500).json({ message: "Erreur serveur ", e });
   }
 }
 
+async function checkOtpV2( email, otp_code ) {
+  try {
+    const otpForUser = await Otp.findOne({
+      where: { receiver: email, otp_code: otp_code, status: "V" },
+    });
+    if (otpForUser) {
+      //update status otp
+      otpForUser.status = "I";
+      otpForUser.save();
+      return true;
+    } else {
+      return false;
+    }
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
+}
 //function to check if email existe in table users
 async function checkUserByEmail(email) {
   // Vérifiez si l'utilisateur existe déjà
@@ -166,5 +176,6 @@ module.exports = {
   registerWithFiles,
   uploadFileForUser,
   sendOtp,
-  checkOtp
+  checkOtp,
+  checkOtpV2
 };

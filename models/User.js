@@ -50,7 +50,7 @@ const User = sequelize.define('User', {
 });
 
 User.hasMany(Transaction, { foreignKey: 'senderId' });
-User.hasMany(Otp, { foreignKey: 'userId' });
+//User.hasMany(Otp, { foreignKey: 'userId' });
 
 
 module.exports = User;
