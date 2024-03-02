@@ -121,7 +121,7 @@ router.post('/register', async (req, res) => {
 
       res.status(201).json({ message: 'Utilisateur créé avec succès' });
     }else{
-      res.status(201).json({ message: 'code otp invalide ou expiré' });
+      res.status(406).json({ message: 'code otp invalide ou expiré' });
     }
     
   } catch (error) {
