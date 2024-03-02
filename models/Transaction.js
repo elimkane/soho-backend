@@ -9,7 +9,7 @@ const Transaction = sequelize.define('Transaction', {
         allowNull: false,
     },
     operator_source: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING,
         allowNull: false,
     },
     amount: {
