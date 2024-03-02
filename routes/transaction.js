@@ -4,11 +4,12 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const Transaction = require('../models/Transaction');
 const authMiddleware = require('../middlewares/auth');
+const transactionController = require('../controllers/transaction');
 
 const router = express.Router();
 
 // Middleware pour s'assurer que l'utilisateur est authentifié
-router.use(authMiddleware);
+//router.use(authMiddleware);
 
 // Middleware de validation pour les données d'entrée
 const validateTransactionInput = [
@@ -17,30 +18,7 @@ const validateTransactionInput = [
 ];
 
 // Endpoint pour créer une transaction
-router.post('/create-transaction', validateTransactionInput, async (req, res) => {
-    // Vérifier les erreurs de validation
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-
-    try {
-        const { amount, recipientEmail } = req.body;
-        const senderId = req.user.id; // L'ID de l'utilisateur authentifié
-
-        // Créer la transaction
-        const transaction = await Transaction.create({
-            amount,
-            senderId,
-            recipientEmail,
-        });
-
-        res.status(201).json({ message: 'Transaction créée avec succès', transaction });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Erreur serveur lors de la création de la transaction' });
-    }
-});
+router.post('/create-transaction', transactionController.doTransfert);
 
 
 // Endpoint pour récupérer une transaction par ID
