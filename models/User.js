@@ -32,7 +32,7 @@ const User = sequelize.define('User', {
     allowNull: false
   },
   state: {
-    type: DataTypes.ENUM('INIT', 'VERIFIED'),
+    type: DataTypes.ENUM('INIT', 'KYC', 'VERIFIED'),
     defaultValue: 'INIT'
   },
   pays_iso_2: {

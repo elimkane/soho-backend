@@ -25,6 +25,7 @@ async function uploadFileForUser(req, res) {
     // Mettez à jour les champs recto et verso dans la base de données
     user.recto = rectoUrl;
     user.verso = versoUrl;
+    user.state = "KYC";
     await user.save();
 
     res.status(200).json({
