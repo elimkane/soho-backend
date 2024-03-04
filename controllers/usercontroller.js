@@ -32,6 +32,7 @@ async function uploadFileForUser(req, res) {
       message: "Fichiers téléchargés avec succès",
       rectoUrl: rectoUrl,
       versoUrl: versoUrl,
+      user
     });
   } catch (error) {
     console.error(error);
