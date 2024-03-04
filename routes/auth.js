@@ -26,7 +26,7 @@ const upload = multer({ storage: storage });
 
 router.post('/register-with-file',upload.fields([{ name: 'recto', maxCount: 1 }, { name: 'verso', maxCount: 1 }]), userController.registerWithFiles);
 
-router.post('/upload-file',upload.fields([{ name: 'recto', maxCount: 1 }, { name: 'verso', maxCount: 1 }]),userController.uploadFileForUser)
+router.post('/upload-file',upload.fields([{ name: 'recto', maxCount: 1 }, { name: 'verso', maxCount: 1 },{ name: 'profil', maxCount: 1 }]),userController.uploadFileForUser)
 // Middleware de validation pour les données d'entrée
 const validateRegisterInput = [
     body('email')

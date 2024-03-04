@@ -10,6 +10,7 @@ async function uploadFileForUser(req, res) {
   try {
     const rectoFile = req.files["recto"][0];
     const versoFile = req.files["verso"][0];
+    const profilFile = req.files["profil"][0];
     const { id } = req.body;
 
     const user = await User.findByPk(id);
@@ -21,17 +22,20 @@ async function uploadFileForUser(req, res) {
     const baseUrl = "http://localhost:3000"; // Remplacez cela par l'URL de votre serveur
     const rectoUrl = baseUrl + "/" + rectoFile.path;
     const versoUrl = baseUrl + "/" + versoFile.path;
+    const profil = baseUrl + "/" + profilFile.path;
 
     // Mettez à jour les champs recto et verso dans la base de données
     user.recto = rectoUrl;
     user.verso = versoUrl;
     user.state = "KYC";
+    user.profil = profil;
     await user.save();
 
     res.status(200).json({
       message: "Fichiers téléchargés avec succès",
       rectoUrl: rectoUrl,
       versoUrl: versoUrl,
+      profilUrl: profil,
       user
     });
   } catch (error) {

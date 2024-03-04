@@ -47,6 +47,10 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: true, // Peut être null si vous le souhaitez
   },
+  profil: {
+    type: DataTypes.STRING,
+    allowNull: true, // Peut être null si vous le souhaitez
+  },
 });
 
 User.hasMany(Transaction, { foreignKey: 'senderId' });
