@@ -1,5 +1,5 @@
 // app.js
-
+require('dotenv').config();
 const express = require('express');
 const swagger = require('./swagger'); // Chemin vers votre fichier swagger.js
 const bodyParser = require('body-parser');
@@ -7,6 +7,7 @@ const authRoutes = require('./routes/auth');
 const transactionRoutes = require('./routes/transaction');
 const sequelize = require('./storage/sequelize-config');
 const path = require('path');
+
 
 const app = express();
 const port = 3000;
@@ -23,7 +24,7 @@ app.use('/auth', authRoutes);
 app.use('/transaction', transactionRoutes);
 // Ajoutez Swagger à votre application
 app.use('/api-docs', swagger.serve, swagger.setup);
-
+console.log('databaseName ',process.env.DATABASE_NAME);
 sequelize.sync({force : true}).then(() => {
 //sequelize.sync().then(() => {
   app.listen(port, () => {
