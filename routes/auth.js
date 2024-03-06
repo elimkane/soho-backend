@@ -9,7 +9,7 @@ const {createTransport} = require("nodemailer");
 const OtpUtils = require('../utils/otpUtils');
 const router = express.Router();
 const multer = require('multer');
-const userController = require('../controllers/userController');
+const userController = require('../controllers/usercontroller');
 const { format } = require('date-fns');
 // Configuration de Multer pour stocker les fichiers dans le dossier 'uploads'
 const storage = multer.diskStorage({
