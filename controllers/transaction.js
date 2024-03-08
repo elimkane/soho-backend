@@ -2,171 +2,146 @@
 
 const User = require("../models/User");
 const Transaction = require("../models/Transaction");
-
+const paydunyaUtils = require("./paydunya/utils-paydunya");
+const orangemoney = require("./wallets/orangemoney");
 const axios = require('axios');
 
 
 //function to registrer user with a files uploaded
 async function doTransfert(req, res) {
-  try {
-    const { source, destination, amount } = req.body;
-    // Construisez l'URL complète du fichier
+    try {
+        const {source, destination, amount} = req.body;
+        // Construisez l'URL complète du fichier
 
-    let user = await User.findByPk(source?.id_user);
-    if (user){
-      //consommer api paydundya pour depot
-      //1- generation invoice
-     const response_invoice =    await generateInvoice(source?.operator,amount);
-     //console.log(response_invoice);
-      if (response_invoice?.response_code !== "00"){
-        res.status(406).json({ message: response_invoice?.response_text });
-      }else { // invoice generation OK
-        const token =  response_invoice.token;
-        //res.status(200).json({ message: "Token invoice cree" });
-        //inserer dans table transaction
-      const transaction =   await Transaction.create({
-          senderId: user.id,
-          operator_source: source?.operator,
-          amount,
-          depot_status: 'INIT',
-          operator_destination: destination?.operator,
-          receiver_phone_number: destination?.phone_number
-        });
-        // do OM transaction
-        const response_transaction = await om(user,source.code,token);
-       //console.log(response_transaction.data);
-       if (!response_transaction.success){
-           //update transaction
-           transaction.depot_status = 'ECHEC';
-           transaction.depot_message = response_transaction.message;
-           transaction.depot_return_code = '404';
-           await transaction.save();
-           res.status(406).json({ message : response_transaction.message });
-       }else{
-           transaction.depot_status = 'SUCCESS';
-           transaction.depot_message = response_transaction.message;
-           transaction.depot_return_code = '200';
-           await transaction.save();
+        let user = await User.findByPk(source?.id_user);
+        if (user) {
+            //consommer api paydundya pour depot
+            //1- generation invoice
+            const response_invoice = await paydunyaUtils.generateCashoutInvoice(source?.operator, amount);
+            if (response_invoice?.response_code !== "00") {//erreur generation facture paydunya
+                res.status(406).json({message: response_invoice?.response_text});
+            } else { // invoice generation OK
+                const token = response_invoice.token;
+                //inserer dans table transaction
+                const transaction = await Transaction.create({
+                    senderId: user.id,
+                    operator_source: source?.operator,
+                    amount,
+                    depot_status: 'INIT',
+                    operator_destination: destination?.operator,
+                    receiver_phone_number: destination?.phone_number
+                });
+                // do OM transaction
+                const response_transaction = await orangemoney.cashout(user, source.code, token);
+                if (!response_transaction.success) { //depot echec
+                    //update transaction
+                    transaction.depot_status = 'ECHEC';
+                    transaction.depot_message = response_transaction.message;
+                    transaction.depot_return_code = '404';
+                    await transaction.save();
+                    res.status(406).json({message: response_transaction.message});
+                } else {
+                    transaction.depot_status = 'SUCCESS';
+                    transaction.depot_message = response_transaction.message;
+                    transaction.depot_return_code = '200';
+                    await transaction.save();
 
-           //depot vers compte client
-           const response_generate_invoice_depot = await generateDepotInvoice(transaction.receiver_phone_number,amount,transaction.operator_destination)
-           if (response_generate_invoice_depot?.response_code !== "00"){
-               transaction.transfert_status = 'ECHEC';
-               transaction.transfert_message = response_generate_invoice_depot.response_text;
-               transaction.transfert_return_code = '404';
-               await transaction.save();
-               res.status(406).json({ message: response_generate_invoice_depot?.response_text });
-           }else{
-               const token_transfert =  response_generate_invoice_depot.disburse_token;
-                const response_depot = await omDepot(token_transfert);
-               if (response_depot?.response_code !== "00"){
-                   transaction.transfert_status = 'ECHEC';
-                   transaction.transfert_message = response_depot.response_text;
-                   transaction.transfert_return_code = '404';
-                   await transaction.save();
-                   res.status(406).json({ message: response_depot?.response_text });
-               }else{
-                   transaction.transfert_status = 'SUCCESS';
-                   transaction.transfert_message = response_depot.response_text;
-                   transaction.transfert_return_code = '200';
-                   await transaction.save();
-                   res.status(200).json({ message : 'depot reussie' });
-               }
-           }
-       }
-      }
-      }else{
-      res.status(404).json({ message: "Utilisateur non trouvée" });
+                    //depot vers compte client
+                    const response_generate_invoice_depot = await paydunyaUtils.generateCashinInvoice(transaction.receiver_phone_number, amount, transaction.operator_destination)
+                    if (response_generate_invoice_depot?.response_code !== "00") {
+                        transaction.transfert_status = 'ECHEC';
+                        transaction.transfert_message = response_generate_invoice_depot.response_text;
+                        transaction.transfert_return_code = '404';
+                        await transaction.save();
+                        res.status(406).json({message: response_generate_invoice_depot?.response_text});
+                    } else {
+                        const token_transfert = response_generate_invoice_depot.disburse_token;
+                        const response_depot = await orangemoney.cashin(token_transfert);
+                        if (response_depot?.response_code !== "00") {
+                            transaction.transfert_status = 'ECHEC';
+                            transaction.transfert_message = response_depot.response_text;
+                            transaction.transfert_return_code = '404';
+                            await transaction.save();
+                            res.status(406).json({message: response_depot?.response_text});
+                        } else {
+                            transaction.transfert_status = 'SUCCESS';
+                            transaction.transfert_message = response_depot.response_text;
+                            transaction.transfert_return_code = '200';
+                            await transaction.save();
+                            res.status(200).json({message: 'depot reussie'});
+                        }
+                    }
+                }
+            }
+        } else {
+            res.status(404).json({message: "Utilisateur non trouvée"});
 
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message: "Erreur serveur"});
     }
-    /*// Vérifiez si l'utilisateur existe déjà
-    let user = await User.findOne({ where: { email } });
-    if (user) {
-      return res.status(400).json({ message: "L'utilisateur existe déjà" });
-    }
+}
+/*
 
-    // Hash du mot de passe
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const otpCode = OtpUtils.generateOTP();
-    // Envoyer le code OTP par e-mail
-    await OtpUtils.sendOTPEmail(email, otpCode);
-
-    const baseUrl = "http://localhost:3000"; // Remplacez cela par l'URL de votre serveur
-    const rectoUrl = baseUrl + "/" + rectoFile.path;
-    const versoUrl = baseUrl + "/" + versoFile.path;
-
-    // Enregistrez les chemins des fichiers dans la base de données
-    user = await User.create({
-      email,
-      first_name,
-      last_name,
-      phone_number,
-      password: hashedPassword,
-      status: "INIT",
-      otp_code: otpCode,
-      recto: rectoUrl,
-      verso: versoUrl,
+/!**
+ * function de generation d'une facture paydunya pour le retrait
+ * @param operator_source
+ * @param amount
+ * @returns {Promise<any>}
+ *!/
+async function generateInvoice(operator_source, amount) {
+    const name = "Depot " + operator_source;
+    let data = JSON.stringify({
+        "invoice": {
+            "item_0": {
+                "name": name.toString(),
+                "quantity": 1,
+                "unit_price": amount,
+                "total_price": amount,
+                "description": name.toString()
+            },
+            "taxes": {},
+            "total_amount": amount,
+            "description": ""
+        },
+        "store": {
+            "name": "MyPay",
+            "tagline": "",
+            "postal_address": "",
+            "phone": "",
+            "logo_url": "",
+            "website_url": ""
+        },
+        "custom_data": {},
+        "actions": {
+            "callback_url": "http://localhost:3000/hello"
+        }
     });
+    let config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'https://app.paydunya.com/api/v1/checkout-invoice/create',
+        headers: {
+            'PAYDUNYA-MASTER-KEY': 'JcOU73pG-NVJm-OYZ0-9hoT-21ZIaeqHdvtc',
+            'PAYDUNYA-PRIVATE-KEY': 'live_private_H104hiqMEhG9ULjI4G63wcQpPGg',
+            'PAYDUNYA-TOKEN': 'LnfLi1GUW9NSGEDIAIRG',
+            'Content-Type': 'application/json'
+        },
+        data: data
+    };
 
-    // Retournez l'URL complète dans la réponse JSON
-    res.status(201).json({
-      message: "Utilisateur créé avec succès",
-      rectoUrl: rectoUrl,
-      versoUrl: versoUrl,
-    });*/
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Erreur serveur" });
-  }
+    const respone = await axios.request(config)
+    return respone.data;
 }
 
-//function that send otp to client
-
-async function generateInvoice(operator_source,amount){
-  const name = "Depot "+operator_source;
-  let data = JSON.stringify({
-    "invoice": {
-      "item_0": {
-        "name": name.toString(),
-        "quantity": 1,
-        "unit_price": amount,
-        "total_price": amount,
-        "description": name.toString()
-      },
-      "taxes": {},
-      "total_amount": amount,
-      "description": ""
-    },
-    "store": {
-      "name": "MyPay",
-      "tagline": "",
-      "postal_address": "",
-      "phone": "",
-      "logo_url": "",
-      "website_url": ""
-    },
-    "custom_data": {},
-    "actions": {
-      "callback_url": "http://localhost:3000/hello"
-    }
-  });
-  let config = {
-    method: 'post',
-    maxBodyLength: Infinity,
-    url: 'https://app.paydunya.com/api/v1/checkout-invoice/create',
-    headers: {
-      'PAYDUNYA-MASTER-KEY': 'JcOU73pG-NVJm-OYZ0-9hoT-21ZIaeqHdvtc',
-      'PAYDUNYA-PRIVATE-KEY': 'live_private_H104hiqMEhG9ULjI4G63wcQpPGg',
-      'PAYDUNYA-TOKEN': 'LnfLi1GUW9NSGEDIAIRG',
-      'Content-Type': 'application/json'
-    },
-    data : data
-  };
-
- const respone =  await axios.request(config)
-      return respone.data;
-}
-
+/!**
+ * fonction pour effectuer une operation de retrait d'un wallet OM vers le compte paydunya
+ * @param user
+ * @param authorization_code
+ * @param token
+ * @returns {Promise<T|T|any>}
+ *!/
 async function om(user, authorization_code, token) {
     try {
         const axios = require('axios');
@@ -201,12 +176,19 @@ async function om(user, authorization_code, token) {
             return error.response.data;
         }
 
-       // throw error; // Vous pouvez choisir de lancer à nouveau l'erreur ou de retourner une valeur par défaut, selon vos besoins.
+        // throw error; // Vous pouvez choisir de lancer à nouveau l'erreur ou de retourner une valeur par défaut, selon vos besoins.
     }
 }
 
-async function generateDepotInvoice(receiver_phone,amount,destination_operator){
-    try{
+/!**
+ * fonction pour la generation de facture facture paydunya pour le depot
+ * @param receiver_phone
+ * @param amount
+ * @param destination_operator
+ * @returns {Promise<T|T|any>}
+ *!/
+async function generateDepotInvoice(receiver_phone, amount, destination_operator) {
+    try {
         const axios = require('axios');
         let data = JSON.stringify({
             "account_alias": receiver_phone,
@@ -225,21 +207,27 @@ async function generateDepotInvoice(receiver_phone,amount,destination_operator){
                 'PAYDUNYA-TOKEN': 'LnfLi1GUW9NSGEDIAIRG',
                 'Content-Type': 'application/json'
             },
-            data : data
+            data: data
         };
         const response = await axios.request(config);
         // Accéder au corps JSON de la réponse
         return response.data;
 
-    }catch (error) {
+    } catch (error) {
         if (error.response && error.response.data) {
             return error.response.data;
         }
     }
 
 }
-async function omDepot(token){
-    try{
+
+/!**
+ * fonction paydunya pour effectuer le depot sur un wallet orangemoney
+ * @param token
+ * @returns {Promise<*|T|T>}
+ *!/
+async function omDepot(token) {
+    try {
         const axios = require('axios');
         let data = JSON.stringify({
             "disburse_invoice": token
@@ -255,25 +243,27 @@ async function omDepot(token){
                 'PAYDUNYA-TOKEN': 'LnfLi1GUW9NSGEDIAIRG',
                 'Content-Type': 'application/json'
             },
-            data : data
+            data: data
         };
         console.log(data);
         const response = await axios.request(config);
         //console.log(response.data);
         // Accéder au corps JSON de la réponse
         return response.data;
-    }catch (error) {
+    } catch (error) {
         //console.log(error);
         if (error.response && error.response.data) {
             return error.response.data;
-        }else{
+        } else {
             return error;
         }
     }
 
 
 }
+*/
+
 module.exports = {
-  doTransfert,
+    doTransfert,
 
 };
