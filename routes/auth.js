@@ -155,7 +155,7 @@ router.post('/login', async (req, res) => {
       const formattedExpirationDate = format(expirationDate, 'dd/MM/yyyy HH:mm:ss');
 
       // Générer un token JWT
-    const token = jwt.sign({ userId: user.id }, 'TWFsaWNrLU1hcnJhLVNvaG9AMjAyNA==', { expiresIn: '1h' });
+    const token = jwt.sign({ userId: user.id ,publicKey: 'TWFsaWNrLU1hcnJhLVNvaG9AMjAyNA=='}, 'TWFsaWNrLU1hcnJhLVNvaG9AMjAyNA==', { expiresIn: '1h' });
     res.status(200).json({token: token,
                           user: user,
                           expiration_at: formattedExpirationDate});
