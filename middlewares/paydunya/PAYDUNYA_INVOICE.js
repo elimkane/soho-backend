@@ -64,7 +64,7 @@ const getPaydunyaCashinInvoice = async (txnAmount, receiverPhone, walletReciever
         };
         const res = await axios.post(ENV_CONTENTS.PAYDUNYA_CASHIN_BASE_URL + 'disburse/get-invoice', payloads, { headers: headers });
         if (res.status === 200) {
-            return { response_code: res?.data?.response_code, "tk_invoice": res?.data?.token, "url": res?.data?.response_text };
+            return { response_code: res?.data?.response_code, "disburse_token": res?.data?.disburse_token };
         }
         return null;
     } catch (error) {
