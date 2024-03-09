@@ -10,11 +10,9 @@ const cashOutMoovBk = async (fullName, phoneNumber, invoice_token) => {
             "moov_burkina_faso_payment_token": invoice_token
         };
         const res = await axios.post(ENV_CONTENTS.PAYDUNYA_CASHOUT_BASE_URL + 'softpay/moov-burkina', payloads);
-         //TODO : LOGS
         return res.data;
     } catch (error) {
-         //TODO : LOGS
-        return null;
+        throw new Error(JSON.stringify(error?.response?.data?? {"msg": error.message}));
     }
 }
 

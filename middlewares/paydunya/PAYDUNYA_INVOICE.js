@@ -44,7 +44,7 @@ const getPaydunyaCashoutInvoice = async (txnAmount, walletSender, walletReciever
         }
         return null;
     } catch (error) {
-        return error?.response?.data;
+        throw new Error(JSON.stringify(error?.response?.data?? {"msg": error.message}));
     }
 
 }
@@ -64,11 +64,11 @@ const getPaydunyaCashinInvoice = async (txnAmount, receiverPhone, walletReciever
         };
         const res = await axios.post(ENV_CONTENTS.PAYDUNYA_CASHIN_BASE_URL + 'disburse/get-invoice', payloads, { headers: headers });
         if (res.status === 200) {
-            return { response_code: res?.data?.response_code, "disburse_token": res?.data?.disburse_token };
+            return { responsecode: res?.data?.response_code, "disburse_token": res?.data?.disburse_token };
         }
         return null;
     } catch (error) {
-        return error?.response?.data;
+        throw new Error(JSON.stringify(error?.response?.data?? {"msg": error.message}));
     }
 
 }

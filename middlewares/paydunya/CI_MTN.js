@@ -11,11 +11,9 @@ const cashOutMtnCi = async (fullName, phoneNumber, ussd_code, invoice_token) => 
             "payment_token": invoice_token
         };
         const res = await axios.post(ENV_CONTENTS.PAYDUNYA_CASHOUT_BASE_URL + 'softpay/mtn-ci', payloads);
-         //TODO : LOGS
         return res.data;
     } catch (error) {
-         //TODO : LOGS
-        return null;
+        throw new Error(JSON.stringify(error?.response?.data?? {"msg": error.message}));
     }
 
 }

@@ -1,0 +1,6 @@
+npx sequelize-cli model:generate --name SohoTransactions --attributes id:integer,txnDate:date,amount:double,walletSender:string,phoneNumberSender:string,walletReciever:string,phoneNumberReciever:string,fullName:string,ussdCode:string,sohoTxnStatus:enum(INIT,SUCCESS,ECHEC),cashoutData:json,cashInData:json
+
+
+npx sequelize-cli db:migrate
+sequelize db:create
+sequelize db:drop

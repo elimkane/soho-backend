@@ -12,7 +12,7 @@ const cashOutWaveSn = async (fullName, phoneNumber, invoice_token) => {
         const res = await axios.post(ENV_CONTENTS.PAYDUNYA_CASHOUT_BASE_URL + 'softpay/wave-senegal', payloads);
         return res.data;
     } catch (error) {
-        return null;
+        throw new Error(JSON.stringify(error?.response?.data?? {"msg": error.message}));
     }
 
 }

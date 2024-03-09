@@ -24,8 +24,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/auth', authRoutes);
 //endpoint transaction
 app.use('/transaction', transactionRoutes);
-
 app.use('/transaction', sohoTransactionRoute);
+
 
 // Ajoutez Swagger à votre application
 app.use('/api-docs', swagger.serve, swagger.setup);

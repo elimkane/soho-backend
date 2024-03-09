@@ -3,7 +3,8 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../storage/sequelize-config');
 
-const Transaction = sequelize.define('Transaction', {
+const Transaction = sequelize.define('Transaction', 
+{
     senderId : {
         type: DataTypes.INTEGER,
         allowNull: false,

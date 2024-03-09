@@ -4,18 +4,13 @@ const ENV_CONTENTS = process.env;
 const paydunyaCashIn = async (disburse_invoice, disburse_id) => {
     try {
         var payloads = {
-            "orange_money_ci_customer_fullname": fullName,
-            "orange_money_ci_email": "",
-            "orange_money_ci_phone_number": phoneNumber,
-            "orange_money_ci_otp": ussd_code,
-            "payment_token": invoice_token
+            "disburse_invoice": disburse_invoice,
+            "disburse_id": disburse_id ?? ""
         };
-        const res = await axios.post(ENV_CONTENTS.PAYDUNYA_CASHOUT_BASE_URL + 'softpay/orange-money-ci', payloads);
-         //TODO : LOGS
+        const res = await axios.post(ENV_CONTENTS.PAYDUNYA_CASHIN_BASE_URL + 'disburse/submit-invoice', payloads);
         return res.data;
     } catch (error) {
-         //TODO : LOGS
-        return null;
+        throw new Error(JSON.stringify(error?.response?.data?? {"msg": error.message}));
     }
 
 }
