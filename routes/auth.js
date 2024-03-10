@@ -52,6 +52,8 @@ const validateRegisterInput = [
 router.post('/send-otp',userController.sendOtp)
 router.post('/check-otp',userController.checkOtp)
 
+//sendOtpSMS
+router.post('/send-otp-chanel', userController.sendOtpNew)
 /**
  * @swagger
  * tags:
