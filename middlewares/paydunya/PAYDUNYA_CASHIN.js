@@ -5,7 +5,7 @@ const paydunyaCashIn = async (disburse_invoice, disburse_id) => {
     try {
         var payloads = {
             "disburse_invoice": disburse_invoice,
-            "disburse_id": disburse_id ?? ""
+            // "disburse_id": disburse_id ?? ""
         };
         var headers = {
             'PAYDUNYA-MASTER-KEY': ENV_CONTENTS.PAYDUNYA_MASTER_KEY,
