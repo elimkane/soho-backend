@@ -15,7 +15,7 @@ const paydunyaWalletsType = {
     omML: "orange-money-mali",
     moovML: "moov-mali",
     omBK: "orange-money-burkina",
-    moovBK: "moov-burkina",
+    moovBK: "moov-burkina"
 }
 
 module.exports = {
