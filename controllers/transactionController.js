@@ -83,6 +83,7 @@ const cashIn = async (req, res) => {
 
 const confirmCashOut = async (req, res) => {
     try {
+        console.log(req.body);
         const { response_code, invoice, status, fail_reason, customer } = req.body;
         console.log("CASHOUT RECIEVED NOTIF => ", { response_code, invoice, status, fail_reason, customer });
 
