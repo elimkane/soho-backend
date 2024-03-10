@@ -118,7 +118,8 @@ const confirmCashOut = async (req, res) => {
 
 const confirmCashIn = async (req, res) => {
     try {
-        const { status, token, withdraw_mode, amount, updated_at, disburse_id, transaction_id, disburse_tx_id } = req.body;
+        const {data} = req.body;
+        const { status, token, withdraw_mode, amount, updated_at, disburse_id, transaction_id, disburse_tx_id } = data;
         console.log("CASHIN RECIEVED NOTIF => ", { status, token, withdraw_mode, amount, updated_at, disburse_id, transaction_id, disburse_tx_id });
         let txn = await SohoTransactions.findOne({ where: { disburseToken: token ?? "" } });
         if (!txn) {
