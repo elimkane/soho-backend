@@ -37,17 +37,16 @@ const sendMoney = async (req, res) => {
         }
 
         const { tk_invoice, url } = await getPaydunyaCashoutInvoice(amount, walletSender, walletReciever);
-        console.log("INCOICE ====", tk_invoice);
+        // console.log("INCOICE ====", tk_invoice);
         if (!tk_invoice) {
             return res.status(500).send({ status: false, message: url });
         }
         const txnInitiated = await handleCashOutTransaction(tk_invoice, walletSender, phoneNumberSender, fullName, ussdCode);
-        console.log(txnInitiated);
         if (!txnInitiated) {
             return res.status(500).send({ status: false, message: "Le wallet sender est incorrect." });
         }
         if (walletSender.includes("wave")) {
-            // TODO SEND SMS TO CUSTOMER IF WALLETSENDER IS WAVE
+            // TODO SEND WAVE URL ON SMS TO CUSTOMER IF WALLETSENDER IS WAVE
         }
         const txn = await SohoTransactions.create({
             userId,
@@ -82,7 +81,7 @@ const confirmCashOut = async (req, res) => {
     try {
         const { data } = req.body;
         const { response_code, invoice, status, fail_reason, customer } = data;
-        console.log("CASHOUT RECIEVED NOTIF => ", { response_code, invoice, status, fail_reason, customer });
+        // console.log("CASHOUT RECIEVED NOTIF => ", { response_code, invoice, status, fail_reason, customer });
 
         let txn = await SohoTransactions.findOne({ where: { tokenInvoice: invoice?.token ?? "" } });
         if (!txn) {
@@ -104,11 +103,11 @@ const confirmCashOut = async (req, res) => {
         txn.disburseToken = disburse_token;
         const cashIn = await paydunyaCashIn(disburse_token, txn.id);
         txn.cashInData = JSON.parse(JSON.stringify(cashIn));
-        console.log("CASHINT INITIATED => ", cashIn);
+        // console.log("CASHINT INITIATED => ", cashIn);
         await txn.save();
         return res.status(200).send({ message: 'Well recieved', status: true });
     } catch (error) {
-        console.log(error.message);
+        // console.log(error.message);
         return res.status(200).send({ message: 'Well recieved', status: true });
     }
 }
@@ -117,7 +116,7 @@ const confirmCashIn = async (req, res) => {
     try {
         const { data } = req.body;
         const { status, token, withdraw_mode, amount, updated_at, disburse_id, transaction_id, disburse_tx_id } = data;
-        console.log("CASHIN RECIEVED NOTIF => ", { status, token, withdraw_mode, amount, updated_at, disburse_id, transaction_id, disburse_tx_id });
+        // console.log("CASHIN RECIEVED NOTIF => ", { status, token, withdraw_mode, amount, updated_at, disburse_id, transaction_id, disburse_tx_id });
         let txn = await SohoTransactions.findOne({ where: { disburseToken: token ?? "" } });
         if (!txn) {
             return res.status(200).send({ message: 'Well recieved', status: true });
@@ -131,7 +130,7 @@ const confirmCashIn = async (req, res) => {
         await txn.save();
         return res.status(200).send({ message: 'Well recieved', status: true });
     } catch (error) {
-        console.log(error.message);
+        // console.log(error.message);
         return res.status(200).send({ message: 'Well recieved', status: true });
     }
 }
