@@ -10,7 +10,7 @@ const SohoTransactions = sequelize.define('SohoTransactions',
     type: DataTypes.INTEGER
   },
   userId: {
-    allowNull: false,
+    allowNull: true,
     type: DataTypes.INTEGER
   },
   txnDate: {

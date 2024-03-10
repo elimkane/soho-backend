@@ -66,7 +66,18 @@ const sendMoney = async (req, res) => {
         return res.status(201).send({ status: true, message: "Transaction inité avec success", data: txnInitiated });
     } catch (error) {
         // console.log(error.message);
-        return res.status(500).send({ status: false, message: "Erreur lors de l'initiation de la transaction", error: error.message } );
+        return res.status(500).send({ status: false, message: "Erreur lors de l'initiation de la transaction", error: error.message });
+    }
+}
+
+const cashIn = async (req, res) => {
+    try {
+        const { amount, phoneNumber, wallette } = req.body;
+        const { disburse_token, responsecode } = await getPaydunyaCashinInvoice(amount, phoneNumber, wallette);
+        const cashIn = await paydunyaCashIn(disburse_token, "1387");
+        return res.status(200).send({ message: 'Well recieved', status: true, cashIn, disburse_token });
+    } catch (error) {
+        return res.status(500).send({ status: false, message: "Erreur lors de l'initiation de la transaction", error: error.message });
     }
 }
 
@@ -105,10 +116,9 @@ const confirmCashOut = async (req, res) => {
 
 const confirmCashIn = async (req, res) => {
     try {
-        console.log(req.body);
         const { status, token, withdraw_mode, amount, updated_at, disburse_id, transaction_id, disburse_tx_id } = req.body;
         console.log("CASHIN RECIEVED NOTIF => ", { status, token, withdraw_mode, amount, updated_at, disburse_id, transaction_id, disburse_tx_id });
-        let txn = await SohoTransactions.findOne({ where: { tokenInvoice: token ?? "" } });
+        let txn = await SohoTransactions.findOne({ where: { disburseToken: token ?? "" } });
         if (!txn) {
             return res.status(200).send({ message: 'Well recieved', status: true });
         }
@@ -182,5 +192,6 @@ const handleCashOutTransaction = async (invoiceToken, walletSender, phoneNumber,
 module.exports = {
     sendMoney,
     confirmCashOut,
-    confirmCashIn
+    confirmCashIn,
+    cashIn
 }
