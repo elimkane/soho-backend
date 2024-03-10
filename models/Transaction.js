@@ -29,6 +29,10 @@ const Transaction = sequelize.define('Transaction',
         type: DataTypes.STRING,
         allowNull : true
     },
+    depot_date:{
+        type: DataTypes.DATE,
+        allowNull : true
+    },
     operator_destination: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -47,6 +51,10 @@ const Transaction = sequelize.define('Transaction',
     },
     transfert_message:{
         type: DataTypes.STRING,
+        allowNull : true
+    },
+    transfert_date:{
+        type: DataTypes.DATE,
         allowNull : true
     },
 });
