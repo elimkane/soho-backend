@@ -161,7 +161,7 @@ const handleCashOutTransaction = async (invoiceToken, walletSender, phoneNumber,
 
         case paydunyaWalletsType.moovML:
             return await cashOutMoovMl(fullName, phoneNumber, invoiceToken);
-        case paydunyaWalletsType.omCI:
+        case paydunyaWalletsType.omML:
             return await cashOutOmMl(fullName, phoneNumber, ussd_code, invoiceToken);
 
         case paydunyaWalletsType.tmoTG:
