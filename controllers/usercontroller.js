@@ -3,6 +3,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const OtpUtils = require("../utils/otpUtils");
+const SMS = require("../utils/sendSms");
 const Otp = require("../models/Otp");
 
 //function to upload only files for existing user
@@ -120,6 +121,37 @@ async function sendOtp(req, res) {
   }
 }
 
+async function sendOtpNew(req, res) {
+  try {
+    //get email from input json
+    const { receiver,chanel } = req.body;
+    //check if user exist
+    //generate otp
+    const otpCode = OtpUtils.generateOTP();
+    //saveOtp to database
+    await Otp.create({
+      receiver: receiver,
+      otp_code: otpCode,
+      canal: chanel,
+      status: "V",
+    });
+
+    switch (chanel){
+      case 'email': await OtpUtils.sendOTPEmail(receiver, otpCode);
+      break;
+      case 'sms' : await  SMS.sendOtpSms(receiver,otpCode)
+    }
+
+    //send Otp to user
+    res.status(200).json({
+      message: "code Otp envoyé avec succés",
+    });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Erreur serveur ", e });
+  }
+}
+
 //Function that check otp validity
 async function checkOtp(req, res) {
   try {
@@ -183,5 +215,6 @@ module.exports = {
   uploadFileForUser,
   sendOtp,
   checkOtp,
-  checkOtpV2
+  checkOtpV2,
+  sendOtpNew
 };
