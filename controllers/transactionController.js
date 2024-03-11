@@ -66,6 +66,35 @@ const sendMoney = async (req, res) => {
     }
 }
 
+const cashOut = async (req, res) => {
+    try {
+        const { amount, phoneNumber, wallette, fullName, ussdCode } = req.body;
+        if (!amount) {
+            return res.status(500).send({ status: false, message: "Le montant de la transaction est obligatoire." });
+        }
+        if (!(wallette)) {
+            return res.status(500).send({ status: false, message: "Les wallet est obligatoire." });
+        }
+        if (!(phoneNumber && fullName)) {
+            return res.status(500).send({ status: false, message: "Les numéro de téléphone et Nom complete sont obligatoire." });
+        }
+        if (wallette.includes("orange-money") && !ussdCode) {
+            return res.status(500).send({ status: false, message: "Le provider code est obligatoire pour les transaction orange money." });
+        }
+        const { tk_invoice, url } = await getPaydunyaCashoutInvoice(amount, "Cash Out", "");
+        if (!tk_invoice) {
+            return res.status(500).send({ status: false, message: url });
+        }
+        const txnInitiated = await handleCashOutTransaction(tk_invoice, wallette, phoneNumber, fullName, ussdCode);
+        if (!txnInitiated) {
+            return res.status(500).send({ status: false, message: "Le wallet est incorrect." });
+        }
+        return res.status(200).send({ message: 'Transaction inité avec succés', status: true, data: txnInitiated });
+    } catch (error) {
+        return res.status(500).send({ status: false, message: "Erreur lors de l'initiation de la transaction", error: error.message });
+    }
+}
+
 const cashIn = async (req, res) => {
     try {
         const { amount, phoneNumber, wallette } = req.body;
@@ -191,5 +220,6 @@ module.exports = {
     sendMoney,
     confirmCashOut,
     confirmCashIn,
-    cashIn
+    cashIn,
+    cashOut
 }
