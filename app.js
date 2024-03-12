@@ -42,8 +42,8 @@ app.use('/transaction', sohoTransactionRoute);
 app.use('/api-docs', swagger.serve, swagger.setup);
 console.log('databaseName ',process.env.DATABASE_NAME);
 // force : true,
-sequelize.sync({ alter: true}).then(() => {
-//sequelize.sync().then(() => {
+//sequelize.sync({ alter: true}).then(() => {
+sequelize.sync().then(() => {
   app.listen(port, () => {
     console.log(`Serveur en cours d'exécution sur le port ${port}`);
   });

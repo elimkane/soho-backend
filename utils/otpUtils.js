@@ -25,6 +25,24 @@ class OtpUtils{
         };
         await transporter.sendMail(mailOptions);
     }
+
+    static async sendAccountValidatedEmail(toEmail) {
+        const transporter = createTransport({
+            service: 'gmail', // Exemple: 'Gmail'
+            auth: {
+                user: 'malick.diallo@ism.edu.sn',
+                pass: 'malickbac',
+            },
+        });
+
+        const mailOptions = {
+            from: 'malick.diallo@ism.edu.sn',
+            to: toEmail,
+            subject: 'DEMANDE DE VALIDATION COMPTE SOHO',
+            text: `Bonjour, votre compte soho a été validé, merci de vous reconnecter sur ce lien http://localhost:3000`,
+        };
+        await transporter.sendMail(mailOptions);
+    }
 }
 
 module.exports = OtpUtils;

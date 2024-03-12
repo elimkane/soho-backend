@@ -210,11 +210,32 @@ async function checkUserByEmail(email) {
   }
 }
 
+async function getAllAccountKyc(req,res){
+  const state = "KYC";
+  let userList = await User.findAll({where: {state}});
+
+  return res.status(200).json({data: userList});
+}
+
+async function validateKyc(req,res){
+  const {id} = req.body;
+  const user = await User.findByPk(id);
+  if (user){
+    user.state = "VERIFIED";
+    await user.save();
+    await  OtpUtils.sendAccountValidatedEmail(user.email);
+    return res.status(200).json({ message: "Compte utilisateur validé!" });
+  }else{
+    return res.status(400).json({ message: "Utilisateur non trouvé!" });
+  }
+}
 module.exports = {
   registerWithFiles,
   uploadFileForUser,
   sendOtp,
   checkOtp,
   checkOtpV2,
-  sendOtpNew
+  sendOtpNew,
+  getAllAccountKyc,
+  validateKyc
 };

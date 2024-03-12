@@ -166,8 +166,8 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });
+router.get('/user-kyc-list',userController.getAllAccountKyc);
 
-
-
+router.post('/user-kyc-validated',userController.validateKyc);
 
 module.exports = router;
