@@ -10,7 +10,6 @@ const path = require('path');
 const sohoTransactionRoute = require('./routes/sohoTransactionRoute');
 const cors = require('cors');
 
-
 const app = express();
 //const port = 3000;
 const port = 8080;
@@ -42,8 +41,8 @@ app.use('/transaction', sohoTransactionRoute);
 app.use('/api-docs', swagger.serve, swagger.setup);
 console.log('databaseName ',process.env.DATABASE_NAME);
 // force : true,
-//sequelize.sync({ alter: true}).then(() => {
-sequelize.sync().then(() => {
+sequelize.sync({ alter: true}).then(() => {
+//sequelize.sync().then(() => {
   app.listen(port, () => {
     console.log(`Serveur en cours d'exécution sur le port ${port}`);
   });

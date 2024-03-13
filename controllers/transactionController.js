@@ -19,6 +19,10 @@ const { cashOutTmoneyTg } = require("../middlewares/paydunya/TG_TMONEY");
 const { getPaydunyaCashoutInvoice, getPaydunyaCashinInvoice } = require("../middlewares/paydunya/PAYDUNYA_INVOICE");
 const { paydunyaWalletsType } = require("../utils/paydunyaWalletType");
 const SohoTransactions = require("../models/sohotransactions");
+const { Sequelize, Op } = require('sequelize');
+const sequelize = require('../storage/sequelize-config');
+
+const ENV_CONTENTS = process.env;
 
 const sendMoney = async (req, res) => {
     try {
@@ -34,6 +38,18 @@ const sendMoney = async (req, res) => {
         }
         if (walletSender.includes("orange-money") && !ussdCode) {
             return res.status(500).send({ status: false, message: "Le provider code est obligatoire pour les transaction orange money." });
+        }
+
+        //check transaction limit
+        //check overdraft for the day
+       const isDailyOverdraftDepassed = await checkDailyOverdraft(userId);
+        if (isDailyOverdraftDepassed){
+            return res.status(401).send({ status: false, message: "Limite transactionnel journalier dépassée." });
+        }
+        //check overdraft for the month
+        const isMonthlyOverdraftDepassed = await checkMonthlyOverdraft(userId);
+        if (isMonthlyOverdraftDepassed){
+            return res.status(401).send({ status: false, message: "Limite transactionnel mensuel dépassée." });
         }
 
         const { tk_invoice, url } = await getPaydunyaCashoutInvoice(amount, walletSender, walletReciever);
@@ -216,10 +232,49 @@ const handleCashOutTransaction = async (invoiceToken, walletSender, phoneNumber,
     }
 }
 
+async function checkDailyOverdraft(req,res) {
+    console.log('check daily limit');
+    const sumDailyTransaction = await SohoTransactions.sum(
+        'amount',{
+            where:{
+                userId: 1,
+                txnDate: {
+                    [Op.gte]: new Date(new Date().setHours(0, 0, 0, 0)),
+                    [Op.lt]: new Date(new Date().setHours(23, 59, 59, 999)),
+                }
+            }
+        }
+    );
+    console.log('sum amount of transaction for the day',sumDailyTransaction);
+    return  sumDailyTransaction >= ENV_CONTENTS.LIMIT_DAILY;
+
+}
+async function checkMonthlyOverdraft(userId) {
+    console.log('check monthly limit');
+    const today = new Date();
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+    const sumMonthlyTransaction = await SohoTransactions.sum(
+        'amount',{
+            where:{
+                userId: userId,
+                txnDate: {
+                    [Op.gte]: firstDayOfMonth,
+                    [Op.lte]: lastDayOfMonth,
+                }
+            }
+        }
+    );
+    console.log('sum amount of transaction for the month',sumMonthlyTransaction);
+    return  sumMonthlyTransaction >= ENV_CONTENTS.LIMIT_MONTHLY;
+}
+
 module.exports = {
     sendMoney,
     confirmCashOut,
     confirmCashIn,
     cashIn,
-    cashOut
+    cashOut,
+    checkDailyOverdraft
 }
