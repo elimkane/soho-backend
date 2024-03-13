@@ -10,7 +10,7 @@ const Service = sequelize.define('Service',
         },
         type:{
             type: DataTypes.ENUM('CARTE', 'MOBILE-MONEY'),
-            defaultValue: ''
+            defaultValue: 'MOBILE-MONEY'
         },
         slug:{
             type: DataTypes.STRING,
