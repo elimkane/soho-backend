@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 const OtpUtils = require("../utils/otpUtils");
 const SMS = require("../utils/sendSms");
 const Otp = require("../models/Otp");
+const base_url = process.env.BASE_URL;
 
 //function to upload only files for existing user
 async function uploadFileForUser(req, res) {
@@ -20,7 +21,7 @@ async function uploadFileForUser(req, res) {
       return res.status(400).json({ message: "Utilisateur n'existe pas" });
     }
 
-    const baseUrl = "http://localhost:3000"; // Remplacez cela par l'URL de votre serveur
+    const baseUrl = base_url; // Remplacez cela par l'URL de votre serveur
     const rectoUrl = baseUrl + "/" + rectoFile.path;
     const versoUrl = baseUrl + "/" + versoFile.path;
     const profil = baseUrl + "/" + profilFile.path;
@@ -66,7 +67,7 @@ async function registerWithFiles(req, res) {
     // Envoyer le code OTP par e-mail
     await OtpUtils.sendOTPEmail(email, otpCode);
 
-    const baseUrl = "http://localhost:3000"; // Remplacez cela par l'URL de votre serveur
+    const baseUrl = base_url; // Remplacez cela par l'URL de votre serveur
     const rectoUrl = baseUrl + "/" + rectoFile.path;
     const versoUrl = baseUrl + "/" + versoFile.path;
 
