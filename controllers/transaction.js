@@ -5,7 +5,8 @@ const Transaction = require("../models/Transaction");
 const paydunyaUtils = require("./paydunya/utils-paydunya");
 const orangemoney = require("./wallets/orangemoney");
 const axios = require('axios');
-
+const Services = require("../models/Service")
+const Fee = require('../models/Fee');
 
 //function to registrer user with a files uploaded
 async function doTransfert(req, res) {
@@ -263,7 +264,32 @@ async function omDepot(token) {
 }
 */
 
+async function getAllService (req,res){
+    const sources = await Services.findAll({
+        where: {source : 1},
+        include: [
+            {
+                model: Fee,
+                attributes: ['taux'], // Ajouter les colonnes de la table "fee" que vous souhaitez récupérer
+            }
+        ]});
+    const destinations = await Services.findAll({
+        where: {destination : 1},
+        include: [
+            {
+                model: Fee,
+                attributes: ['taux'], // Ajouter les colonnes de la table "fee" que vous souhaitez récupérer
+            }
+        ]});
+    const data = {
+        source : sources,
+        destinations : destinations
+    }
+    return res.status(200).json(data);
+}
+
+
 module.exports = {
     doTransfert,
-
+    getAllService
 };

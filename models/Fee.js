@@ -4,7 +4,7 @@ const sequelize = require('../storage/sequelize-config');
 
 const Fee = sequelize.define('Fee',{
         taux: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.FLOAT,
             allowNull: false,
         },
         serviceId:{

@@ -56,4 +56,5 @@ router.get('/list-transactions', async (req, res) => {
     }
 });
 
+router.get('/list-services',transactionController.getAllService);
 module.exports = router;
