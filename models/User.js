@@ -3,6 +3,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../storage/sequelize-config');
 const Transaction = require('./Transaction');  // Assurez-vous que le chemin est correct
+const SohoTransaction = require('./sohotransactions');  // Assurez-vous que le chemin est correct
 const Otp = require('./Otp');  // Assurez-vous que le chemin est correct
 
 
@@ -54,6 +55,7 @@ const User = sequelize.define('User', {
 });
 
 User.hasMany(Transaction, { foreignKey: 'senderId' });
+User.hasMany(SohoTransaction, { foreignKey: 'userId' });
 //User.hasMany(Otp, { foreignKey: 'userId' });
 
 

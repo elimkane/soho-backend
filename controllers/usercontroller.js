@@ -181,6 +181,30 @@ async function checkOtp(req, res) {
   }
 }
 
+async function checkOtpPhone(req, res) {
+  try {
+    const { phone_number, otp_code } = req.body;
+
+    //check user by mail
+   // const user = await checkUserByEmail(email);
+      //check validaty of otp
+      const otpForUser = await Otp.findOne({
+        where: { receiver: phone_number, otp_code: otp_code, status: "V" },
+      });
+      if (otpForUser) {
+        //update status otp
+        otpForUser.status = "I";
+        otpForUser.save();
+        res.status(200).json({ message: "code OTP valide" });
+      } else {
+        res.status(404).json({ message: "code OTP incorrect ou expiré" });
+      }
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ message: "Erreur serveur ", e });
+  }
+}
+
 async function checkOtpV2( email, otp_code ) {
   try {
     const otpForUser = await Otp.findOne({
@@ -210,11 +234,33 @@ async function checkUserByEmail(email) {
   }
 }
 
+async function getAllAccountKyc(req,res){
+  const state = "KYC";
+  let userList = await User.findAll({where: {state}});
+
+  return res.status(200).json({data: userList});
+}
+
+async function validateKyc(req,res){
+  const {id} = req.body;
+  const user = await User.findByPk(id);
+  if (user){
+    user.state = "VERIFIED";
+    await user.save();
+    await  OtpUtils.sendAccountValidatedEmail(user.email);
+    return res.status(200).json({ message: "Compte utilisateur validé!" });
+  }else{
+    return res.status(400).json({ message: "Utilisateur non trouvé!" });
+  }
+}
 module.exports = {
   registerWithFiles,
   uploadFileForUser,
   sendOtp,
   checkOtp,
   checkOtpV2,
-  sendOtpNew
+  sendOtpNew,
+  getAllAccountKyc,
+  validateKyc,
+  checkOtpPhone
 };

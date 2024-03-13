@@ -51,6 +51,7 @@ const validateRegisterInput = [
 //send OTP endpoint
 router.post('/send-otp',userController.sendOtp)
 router.post('/check-otp',userController.checkOtp)
+router.post('/check-otp-phone',userController.checkOtpPhone)
 
 //sendOtpSMS
 router.post('/send-otp-chanel', userController.sendOtpNew)
@@ -166,8 +167,8 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });
+router.get('/user-kyc-list',userController.getAllAccountKyc);
 
-
-
+router.post('/user-kyc-validated',userController.validateKyc);
 
 module.exports = router;

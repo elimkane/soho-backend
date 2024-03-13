@@ -1,5 +1,5 @@
 const express = require('express');
-const { sendMoney, confirmCashOut, confirmCashIn, cashIn, cashOut } = require('../controllers/transactionController');
+const { sendMoney, confirmCashOut, confirmCashIn, cashIn, cashOut,checkDailyOverdraft } = require('../controllers/transactionController');
 
 const sohoTransactionRoute = express.Router();
 
@@ -8,6 +8,7 @@ sohoTransactionRoute.post('/cashin', cashIn);
 sohoTransactionRoute.post('/cashout', cashOut);
 sohoTransactionRoute.post('/cashout/confirm-transactions', confirmCashOut);
 sohoTransactionRoute.post('/cashin/confirm-transactions', confirmCashIn);
+//sohoTransactionRoute.post('/checkOverDraft', checkDailyOverdraft);
 
 
 
