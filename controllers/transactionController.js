@@ -52,12 +52,14 @@ const sendMoney = async (req, res) => {
             return res.status(401).send({ status: false, message: "Limite transactionnel mensuel dépassée." });
         }
 
-        const { tk_invoice, url } = await getPaydunyaCashoutInvoice(amount, walletSender, walletReciever);
+        const checkoutInvoice = await getPaydunyaCashoutInvoice(amount, walletSender, walletReciever);
+        const { tk_invoice, url } = checkoutInvoice;
+      
         // console.log("INCOICE ====", tk_invoice);
         if (!tk_invoice) {
             return res.status(500).send({ status: false, message: url });
         }
-        const txnInitiated = await handleCashOutTransaction(tk_invoice, walletSender, phoneNumberSender, fullName, ussdCode);
+        const txnInitiated = walletSender !== paydunyaWalletsType.card ? await handleCashOutTransaction(tk_invoice, walletSender, phoneNumberSender, fullName, ussdCode) : checkoutInvoice;
         if (!txnInitiated) {
             return res.status(500).send({ status: false, message: "Le wallet sender est incorrect." });
         }
