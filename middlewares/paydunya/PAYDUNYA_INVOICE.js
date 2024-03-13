@@ -40,7 +40,7 @@ const getPaydunyaCashoutInvoice = async (txnAmount, walletSender, walletReciever
         };
         const res = await axios.post(ENV_CONTENTS.PAYDUNYA_CASHOUT_BASE_URL + 'checkout-invoice/create', payloads, { headers: headers });
         if (res.status === 200) {
-            return { response_code: res?.data?.response_code, "tk_invoice": res?.data?.token, "url": res?.data?.response_text };
+            return { ...res?.data, response_code: res?.data?.response_code, "tk_invoice": res?.data?.token, "url": res?.data?.response_text };
         }
         return null;
     } catch (error) {
