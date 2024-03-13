@@ -1,5 +1,3 @@
-// sequelize-config.js
-
 const Sequelize = require('sequelize');
 const { resolve } = require("path");
 
