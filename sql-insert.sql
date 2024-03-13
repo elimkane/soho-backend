@@ -1,0 +1,41 @@
+--Services
+INSERT INTO soho.Services (id, libelle, type, slug, pays_iso_2, source, destination, createdAt, updatedAt) VALUES (1, 'Orange Money Sénégal', 'MOBILE-MONEY', 'orange-money-senegal', 'SN', 1, 1, '2024-03-13 20:40:27', '2024-03-13 20:40:30');
+INSERT INTO soho.Services (id, libelle, type, slug, pays_iso_2, source, destination, createdAt, updatedAt) VALUES (2, 'Free Money Sénégal', 'MOBILE-MONEY', 'free-money-senegal', 'SN', 1, 1, '2024-03-13 20:40:27', '2024-03-13 20:40:30');
+INSERT INTO soho.Services (id, libelle, type, slug, pays_iso_2, source, destination, createdAt, updatedAt) VALUES (3, 'Expresso Sénégal', 'MOBILE-MONEY', 'expresso-senegal', 'SN', 1, 1, '2024-03-13 20:40:27', '2024-03-13 20:40:30');
+INSERT INTO soho.Services (id, libelle, type, slug, pays_iso_2, source, destination, createdAt, updatedAt) VALUES (4, 'Wave Sénégal', 'MOBILE-MONEY', 'wave-senegal', 'SN', 1, 1, '2024-03-13 20:40:27', '2024-03-13 20:40:30');
+INSERT INTO soho.Services (id, libelle, type, slug, pays_iso_2, source, destination, createdAt, updatedAt) VALUES (5, 'Wizall Sénégal', 'MOBILE-MONEY', 'wizall-senegal', 'SN', 1, 1, '2024-03-13 20:40:27', '2024-03-13 20:40:30');
+INSERT INTO soho.Services (id, libelle, type, slug, pays_iso_2, source, destination, createdAt, updatedAt) VALUES (6, 'MTN Bénin', 'MOBILE-MONEY', 'mtn-benin', 'BN', 1, 1, '2024-03-13 20:40:27', '2024-03-13 20:40:30');
+INSERT INTO soho.Services (id, libelle, type, slug, pays_iso_2, source, destination, createdAt, updatedAt) VALUES (7, 'MOOVE Bénin', 'MOBILE-MONEY', 'moov-benin', 'BN', 1, 1, '2024-03-13 20:40:27', '2024-03-13 20:40:30');
+INSERT INTO soho.Services (id, libelle, type, slug, pays_iso_2, source, destination, createdAt, updatedAt) VALUES (8, 'MTN Cote d\'Ivoire', 'MOBILE-MONEY', 'mtn-ci', 'CI', 1, 1, '2024-03-13 20:40:27', '2024-03-13 20:40:30');
+INSERT INTO soho.Services (id, libelle, type, slug, pays_iso_2, source, destination, createdAt, updatedAt) VALUES (9, 'MTN Cote d\'Ivoire', 'MOBILE-MONEY', 'mtn-ci', 'CI', 1, 1, '2024-03-13 20:40:27', '2024-03-13 20:40:30');
+INSERT INTO soho.Services (id, libelle, type, slug, pays_iso_2, source, destination, createdAt, updatedAt) VALUES (10, 'Orange Money Cote d\'Ivoire', 'MOBILE-MONEY', 'orange-money-ci', 'CI', 1, 1, '2024-03-13 20:40:27', '2024-03-13 20:40:30');
+INSERT INTO soho.Services (id, libelle, type, slug, pays_iso_2, source, destination, createdAt, updatedAt) VALUES (11, 'Wave Cote d\'Ivoire', 'MOBILE-MONEY', 'wave-ci', 'CI', 1, 1, '2024-03-13 20:40:27', '2024-03-13 20:40:30');
+INSERT INTO soho.Services (id, libelle, type, slug, pays_iso_2, source, destination, createdAt, updatedAt) VALUES (12, 'MOOVE Cote d\'Ivoire', 'MOBILE-MONEY', 'moov-ci', 'CI', 1, 1, '2024-03-13 20:40:27', '2024-03-13 20:40:30');
+INSERT INTO soho.Services (id, libelle, type, slug, pays_iso_2, source, destination, createdAt, updatedAt) VALUES (13, 'T-MONEY Togo', 'MOBILE-MONEY', 't-money-togo', 'TG', 1, 1, '2024-03-13 20:40:27', '2024-03-13 20:40:30');
+INSERT INTO soho.Services (id, libelle, type, slug, pays_iso_2, source, destination, createdAt, updatedAt) VALUES (14, 'MOOV Togo', 'MOBILE-MONEY', 'moov-togo', 'TG', 1, 1, '2024-03-13 20:40:27', '2024-03-13 20:40:30');
+INSERT INTO soho.Services (id, libelle, type, slug, pays_iso_2, source, destination, createdAt, updatedAt) VALUES (15, 'Orange Money Mali', 'MOBILE-MONEY', 'orange-money-mali', 'ML', 1, 1, '2024-03-13 20:40:27', '2024-03-13 20:40:30');
+INSERT INTO soho.Services (id, libelle, type, slug, pays_iso_2, source, destination, createdAt, updatedAt) VALUES (16, 'MOOVE MALI', 'MOBILE-MONEY', 'moov-mali', 'ML', 1, 1, '2024-03-13 20:40:27', '2024-03-13 20:40:30');
+INSERT INTO soho.Services (id, libelle, type, slug, pays_iso_2, source, destination, createdAt, updatedAt) VALUES (17, 'Orange Money Burkina', 'MOBILE-MONEY', 'orange-money-burkina', 'BK', 1, 1, '2024-03-13 20:40:27', '2024-03-13 20:40:30');
+INSERT INTO soho.Services (id, libelle, type, slug, pays_iso_2, source, destination, createdAt, updatedAt) VALUES (18, 'MOOVE Burkina', 'MOBILE-MONEY', 'moov-burkina', 'BK', 1, 1, '2024-03-13 20:40:27', '2024-03-13 20:40:30');
+INSERT INTO soho.Services (id, libelle, type, slug, pays_iso_2, source, destination, createdAt, updatedAt) VALUES (19, 'Paydunya Card', 'MOBILE-MONEY', 'CARTE', 'ALL', 1, 1, '2024-03-13 20:40:27', '2024-03-13 20:40:30');
+
+--Fee
+INSERT INTO soho.Fees (id, taux, serviceId, createdAt, updatedAt) VALUES (1, 3, 1, '2024-03-13 20:53:14', '2024-03-13 20:53:14');
+INSERT INTO soho.Fees (id, taux, serviceId, createdAt, updatedAt) VALUES (2, 3, 2, '2024-03-13 20:53:14', '2024-03-13 20:53:14');
+INSERT INTO soho.Fees (id, taux, serviceId, createdAt, updatedAt) VALUES (3, 3, 3, '2024-03-13 20:53:14', '2024-03-13 20:53:14');
+INSERT INTO soho.Fees (id, taux, serviceId, createdAt, updatedAt) VALUES (4, 3, 4, '2024-03-13 20:53:14', '2024-03-13 20:53:14');
+INSERT INTO soho.Fees (id, taux, serviceId, createdAt, updatedAt) VALUES (5, 3, 5, '2024-03-13 20:53:14', '2024-03-13 20:53:14');
+INSERT INTO soho.Fees (id, taux, serviceId, createdAt, updatedAt) VALUES (6, 3, 6, '2024-03-13 20:53:14', '2024-03-13 20:53:14');
+INSERT INTO soho.Fees (id, taux, serviceId, createdAt, updatedAt) VALUES (7, 3, 7, '2024-03-13 20:53:14', '2024-03-13 20:53:14');
+INSERT INTO soho.Fees (id, taux, serviceId, createdAt, updatedAt) VALUES (8, 3, 8, '2024-03-13 20:53:14', '2024-03-13 20:53:14');
+INSERT INTO soho.Fees (id, taux, serviceId, createdAt, updatedAt) VALUES (9, 3, 9, '2024-03-13 20:53:14', '2024-03-13 20:53:14');
+INSERT INTO soho.Fees (id, taux, serviceId, createdAt, updatedAt) VALUES (10, 3, 10, '2024-03-13 20:53:14', '2024-03-13 20:53:14');
+INSERT INTO soho.Fees (id, taux, serviceId, createdAt, updatedAt) VALUES (11, 3, 11, '2024-03-13 20:53:14', '2024-03-13 20:53:14');
+INSERT INTO soho.Fees (id, taux, serviceId, createdAt, updatedAt) VALUES (12, 3, 12, '2024-03-13 20:53:14', '2024-03-13 20:53:14');
+INSERT INTO soho.Fees (id, taux, serviceId, createdAt, updatedAt) VALUES (13, 3, 13, '2024-03-13 20:53:14', '2024-03-13 20:53:14');
+INSERT INTO soho.Fees (id, taux, serviceId, createdAt, updatedAt) VALUES (14, 3, 14, '2024-03-13 20:53:14', '2024-03-13 20:53:14');
+INSERT INTO soho.Fees (id, taux, serviceId, createdAt, updatedAt) VALUES (15, 3, 15, '2024-03-13 20:53:14', '2024-03-13 20:53:14');
+INSERT INTO soho.Fees (id, taux, serviceId, createdAt, updatedAt) VALUES (16, 3, 16, '2024-03-13 20:53:14', '2024-03-13 20:53:14');
+INSERT INTO soho.Fees (id, taux, serviceId, createdAt, updatedAt) VALUES (17, 3, 17, '2024-03-13 20:53:14', '2024-03-13 20:53:14');
+INSERT INTO soho.Fees (id, taux, serviceId, createdAt, updatedAt) VALUES (18, 3, 18, '2024-03-13 20:53:14', '2024-03-13 20:53:14');
+INSERT INTO soho.Fees (id, taux, serviceId, createdAt, updatedAt) VALUES (19, 5, 19, '2024-03-13 20:53:14', '2024-03-13 20:53:14');
