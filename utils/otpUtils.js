@@ -48,20 +48,23 @@ class OtpUtils{
         await transporter.sendMail(mailOptions);
     }
 
-    static async sendAccountValidatedEmail(toEmail) {
+    static async sendAccountValidatedEmail(toEmail,validated) {
         const transporter = createTransport({
-            service: 'gmail', // Exemple: 'Gmail'
+            host: 'mail.sohomoneytransfer.com',
+            port: 465,
+            secure: true, // false pour le protocole non sécurisé (STARTTLS)
+            //service: 'gmail', // Exemple: 'Gmail'
             auth: {
-                user: 'malick.diallo@ism.edu.sn',
-                pass: 'malickbac',
-            },
+                user: 'contact-soho@sohomoneytransfer.com',
+                pass: 'P@sser1234',
+            }
         });
-
+       const text =  validated?'Bonjour, votre compte soho a été validé. Pour effectuer des transferts, merci de vous reconnecter sur ce lien http://localhost:3000 ':'Bonjour, votre demande de validation de compte de compte à été rejeté pour motif de probléme de KYC';
         const mailOptions = {
-            from: 'malick.diallo@ism.edu.sn',
+            from: 'contact-soho@sohomoneytransfer.com',
             to: toEmail,
             subject: 'DEMANDE DE VALIDATION COMPTE SOHO',
-            text: `Bonjour, votre compte soho a été validé, merci de vous reconnecter sur ce lien http://localhost:3000`,
+            text: text,
         };
         await transporter.sendMail(mailOptions);
     }
