@@ -30,7 +30,9 @@ const getPaydunyaCashoutInvoice = async (txnAmount, walletSender, walletReciever
             "custom_data": {
             },
             "actions": {
-                "callback_url": ENV_CONTENTS.PAYDUNYA_CASHOUT_CALLBACK
+                "callback_url": ENV_CONTENTS.PAYDUNYA_CASHOUT_CALLBACK,
+                "return_url" :ENV_CONTENTS.PAYDUNYA_RETURN_URL,
+                "cancel_url" :ENV_CONTENTS.PAYDUNYA_RETURN_URL
             }
         };
         var headers = {

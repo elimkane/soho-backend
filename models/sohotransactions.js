@@ -21,6 +21,10 @@ const SohoTransactions = sequelize.define('SohoTransactions',
     type: DataTypes.DOUBLE,
     allowNull: false
   },
+  totalAmount: {
+    type: DataTypes.DOUBLE,
+    allowNull: false
+  },
   walletSender: {
     type: DataTypes.STRING,
     allowNull: false
