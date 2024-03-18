@@ -26,8 +26,8 @@ const ENV_CONTENTS = process.env;
 
 const sendMoney = async (req, res) => {
     try {
-        //const { amount,totalAmount, walletSender, phoneNumberSender, walletReciever, phoneNumberReciever, fullName, ussdCode, userId } = req.body;
-        const { amount, walletSender, phoneNumberSender, walletReciever, phoneNumberReciever, fullName, ussdCode, userId } = req.body;
+        const { amount,totalAmount, walletSender, phoneNumberSender, walletReciever, phoneNumberReciever, fullName, ussdCode, userId } = req.body;
+        //const { amount, walletSender, phoneNumberSender, walletReciever, phoneNumberReciever, fullName, ussdCode, userId } = req.body;
         if (!amount) {
             return res.status(500).send({ status: false, message: "Le montant de la transaction est obligatoire." });
         }
@@ -53,8 +53,8 @@ const sendMoney = async (req, res) => {
             return res.status(401).send({ status: false, message: "Limite transactionnel mensuel dépassée." });
         }
 
-        //const checkoutInvoice = await getPaydunyaCashoutInvoice(totalAmount, walletSender, walletReciever);
-        const checkoutInvoice = await getPaydunyaCashoutInvoice(amount, walletSender, walletReciever);
+        const checkoutInvoice = await getPaydunyaCashoutInvoice(totalAmount, walletSender, walletReciever);
+        //const checkoutInvoice = await getPaydunyaCashoutInvoice(amount, walletSender, walletReciever);
         const { tk_invoice, url } = checkoutInvoice;
       
         // console.log("INCOICE ====", tk_invoice);
@@ -70,7 +70,7 @@ const sendMoney = async (req, res) => {
         }
         const txn = await SohoTransactions.create({
             userId,
-            //totalAmount,
+            totalAmount,
             amount,
             walletSender,
             phoneNumberSender,
