@@ -53,6 +53,7 @@ const sendMoney = async (req, res) => {
             return res.status(401).send({ status: false, message: "Limite transactionnel mensuel dépassée." });
         }
 
+        //const checkoutInvoice = await getPaydunyaCashoutInvoice(totalAmount, walletSender, walletReciever);
         const checkoutInvoice = await getPaydunyaCashoutInvoice(amount, walletSender, walletReciever);
         const { tk_invoice, url } = checkoutInvoice;
       
@@ -69,6 +70,7 @@ const sendMoney = async (req, res) => {
         }
         const txn = await SohoTransactions.create({
             userId,
+            //totalAmount,
             amount,
             walletSender,
             phoneNumberSender,
