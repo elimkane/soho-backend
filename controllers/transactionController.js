@@ -19,7 +19,7 @@ const { cashOutTmoneyTg } = require("../middlewares/paydunya/TG_TMONEY");
 const { getPaydunyaCashoutInvoice, getPaydunyaCashinInvoice } = require("../middlewares/paydunya/PAYDUNYA_INVOICE");
 const { paydunyaWalletsType } = require("../utils/paydunyaWalletType");
 const SohoTransactions = require("../models/sohotransactions");
-const { Sequelize, Op } = require('sequelize');
+const { Sequelize, Op, where} = require('sequelize');
 const sequelize = require('../storage/sequelize-config');
 
 const ENV_CONTENTS = process.env;
@@ -275,11 +275,22 @@ async function checkMonthlyOverdraft(userId) {
     return  sumMonthlyTransaction >= ENV_CONTENTS.LIMIT_MONTHLY;
 }
 
+async function getAllTransactionForUserById(req,res){
+    const userId = req.params.user_id;
+    const transactions = await SohoTransactions.findAll({ where: { userId: userId } });
+    res.status(200).send(transactions);
+}
+async function getTransactionById(req,res){
+    const transactionId = req.params.transaction_id;
+    const transaction = await SohoTransactions.findByPk(transactionId);
+    !transaction?res.status(404).send({message : 'transaction non trouvée'}) :res.status(200).send(transaction);
+}
 module.exports = {
     sendMoney,
     confirmCashOut,
     confirmCashIn,
     cashIn,
     cashOut,
-    checkDailyOverdraft
+    getAllTransactionForUserById,
+    getTransactionById
 }

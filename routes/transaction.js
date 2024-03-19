@@ -22,7 +22,7 @@ router.post('/create-transaction', transactionController.doTransfert);
 
 
 // Endpoint pour récupérer une transaction par ID
-router.get('/get-transaction/:transactionId', async (req, res) => {
+router.get('/get-transaction-old/:transactionId', async (req, res) => {
     try {
         const transactionId = req.params.transactionId;
 
