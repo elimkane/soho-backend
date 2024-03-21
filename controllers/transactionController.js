@@ -110,7 +110,7 @@ const cashOut = async (req, res) => {
         if (!txnInitiated) {
             return res.status(500).send({ status: false, message: "Le wallet est incorrect." });
         }
-        return res.status(200).send({ message: 'Transaction inité avec succés.', status: true, data: txnInitiated });
+        return res.status(200).send({ message: 'Votre transaction a ete bien initiée. Veuillez patienter s\'il vous plait', status: true, data: txnInitiated });
     } catch (error) {
         return res.status(500).send({ status: false, message: "Erreur lors de l'initiation de la transaction", error: error.message });
     }
