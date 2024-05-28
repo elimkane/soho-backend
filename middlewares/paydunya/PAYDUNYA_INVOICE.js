@@ -1,7 +1,7 @@
 const axios = require('axios');
 const ENV_CONTENTS = process.env;
 
-const getPaydunyaCashoutInvoice = async (txnAmount, walletSender, walletReciever) => {
+const getPaydunyaCashoutInvoice = async (txnAmount, walletSender, walletReciever, userId, email, first_name, last_name, phoneNumberSender) => {
     try {
         const payloads = {
             "invoice": {
@@ -27,7 +27,15 @@ const getPaydunyaCashoutInvoice = async (txnAmount, walletSender, walletReciever
                 "logo_url": "",
                 "website_url": ""
             },
-            "custom_data": {
+            "custom_data":  {
+                "email": email,
+                "first_name": first_name,
+                "last_name": last_name,
+                "userId": userId,
+                "wallet_sender": walletSender,
+                "wallet_receiver": walletReciever,
+                "amount": txnAmount
+    
             },
             "actions": {
                 "callback_url": ENV_CONTENTS.PAYDUNYA_CASHOUT_CALLBACK,
