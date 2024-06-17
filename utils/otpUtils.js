@@ -59,7 +59,7 @@ class OtpUtils{
                 pass: 'P@sser1234',
             }
         });
-       const text =  validated?'Bonjour, votre compte soho a été validé. Pour effectuer des transferts, merci de vous reconnecter sur ce lien https://soho-front-five.vercel.app ':'Bonjour, votre demande de validation de compte de compte à été rejeté pour motif de probléme de KYC';
+       const text =  validated?'Bonjour, votre compte soho a été validé. Pour effectuer des transferts, merci de vous reconnecter sur ce lien https://sohomoneytransfer.com ':'Bonjour, votre demande de validation de compte de compte à été rejeté pour motif de probléme de KYC';
         const mailOptions = {
             from: 'contact-soho@sohomoneytransfer.com',
             to: toEmail,
